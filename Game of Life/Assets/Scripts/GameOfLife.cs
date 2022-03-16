@@ -12,14 +12,15 @@ public class GameOfLife : MonoBehaviour
     [SerializeField]
     private GameObject cellPrefab;
     [SerializeField]
-    private float interwal = 1.0f;
+    private float interval = 1.0f;
 
     private GameObject[,] grid;
     private int width = 50;
     private int height = 50;
     private Vector3 cameraOffset = new Vector3(0, 0, -35);
-    private Vector2 cellOffset = new Vector3(0.5f, 0.5f);
+    private Vector2 cellOffset = new Vector2(0.5f, 0.5f);
     private bool gamePaused = false;
+    private float nextStepTime;
 
     private void Awake()
     {
@@ -30,12 +31,22 @@ public class GameOfLife : MonoBehaviour
     private void Start()
     {
         RandomiseGrid();
+        nextStepTime = Time.time + interval;
+    }
+
+    private void Update()
+    {
+        if (!gamePaused && Time.time >= nextStepTime)
+        {
+            CheckForChangeState();
+            nextStepTime = Time.time + interval;
+        }
     }
 
     private void RandomiseGrid()
     {
         System.Random r = new System.Random();
-        List<Vector2> toChangeState = new List<Vector2>();
+        List<Vector2Int> changeState = new List<Vector2Int>();
 
         for (int x = 0; x < width; x++)
         {
@@ -43,12 +54,12 @@ public class GameOfLife : MonoBehaviour
             {
                 if(r.Next(1, 5) == 1) //25% chance to create a living cell
                 {
-                    toChangeState.Add(new Vector2(x, y));
+                    changeState.Add(new Vector2Int(x, y));
                 }
             }
         }
 
-        ChangeStates(toChangeState);
+        ChangeStates(changeState);
     }
 
     private void CreateGrid()
@@ -62,29 +73,21 @@ public class GameOfLife : MonoBehaviour
         mainCamera.transform.position = gameBoard.position + cameraOffset;
     }
 
-    private void Update()
-    {
-        if(!gamePaused)
-        {
-            CheckForChangeState();
-        }
-    }
-
     private void CheckForChangeState()
     {
-        List<Vector2> toChangeState = new List<Vector2>();
-        for(int i = 0; i < width; i++)
+        List<Vector2Int> toChangeState = new List<Vector2Int>();
+        for (int i = 0; i < width; i++)
         {
-            for(int j = 0; j < height; j++)
+            for (int j = 0; j < height; j++)
             {
                 int neighbourCount = CountNeighbours(i, j);
-                if((neighbourCount < 2 || neighbourCount > 3) && grid[i, j] != null)
+                if ((neighbourCount < 2 || neighbourCount > 3) && grid[i, j] != null)
                 {
-                    toChangeState.Add(new Vector2(i, j));
+                    toChangeState.Add(new Vector2Int(i, j));
                 }
-                else if(neighbourCount == 3 && grid[i,j] == null)
+                else if (neighbourCount == 3 && grid[i, j] == null)
                 {
-                    toChangeState.Add(new Vector2(i, j));
+                    toChangeState.Add(new Vector2Int(i, j));
                 }
             }
         }
@@ -96,11 +99,11 @@ public class GameOfLife : MonoBehaviour
     {
         int neighbours = 0;
         int minX = x > 0 ? -1 : 0;
-        int maxX = x < width ? -1 : 0;
+        int maxX = x < width - 1 ? 1 : 0;
         int minY = y > 0 ? -1 : 0;
-        int maxY = y < height ? -1 : 0;
+        int maxY = y < height - 1 ? 1 : 0;
 
-        for(int i = minX; i <= maxX; i++)
+        for (int i = minX; i <= maxX; i++)
         {
             for(int j = minY; j <= maxY; j++)
             {
@@ -119,13 +122,18 @@ public class GameOfLife : MonoBehaviour
         return neighbours;
     }
 
-    private void ChangeStates(List<Vector2> cellsToChange)
+    private void ChangeStates(List<Vector2Int> cellsToChange)
     {
-        foreach(Vector2 cell in cellsToChange)
+        if(cellsToChange.Count == 0)
         {
-            if(grid[(int)cell.x, (int)cell.y] != null)
+            return;
+        }
+
+        foreach (Vector2Int cell in cellsToChange)
+        {
+            if (grid[(int)cell.x, (int)cell.y] != null)
             {
-                grid[(int)cell.x, (int)cell.y] = null;
+                GameObject.Destroy(grid[(int)cell.x, (int)cell.y]);
             }
             else
             {
