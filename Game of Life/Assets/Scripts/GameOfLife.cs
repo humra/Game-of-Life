@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -36,6 +34,11 @@ public class GameOfLife : MonoBehaviour
 
     private void Update()
     {
+        if(gamePaused)
+        {
+            nextStepTime += Time.deltaTime;
+        }
+
         if (!gamePaused && Time.time >= nextStepTime)
         {
             CheckForChangeState();
@@ -131,17 +134,75 @@ public class GameOfLife : MonoBehaviour
 
         foreach (Vector2Int cell in cellsToChange)
         {
-            if (grid[(int)cell.x, (int)cell.y] != null)
+            if (grid[cell.x, cell.y] != null)
             {
-                GameObject.Destroy(grid[(int)cell.x, (int)cell.y]);
+                GameObject.Destroy(grid[cell.x, cell.y]);
             }
             else
             {
                 GameObject newCell = Instantiate(cellPrefab);
                 newCell.transform.SetParent(gameBoard);
                 newCell.transform.position = cell + cellOffset;
-                grid[(int)cell.x, (int)cell.y] = newCell;
+                grid[cell.x, cell.y] = newCell;
             }
         }
+    }
+
+    private void ClearGrid()
+    {
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                if(grid[i, j] != null)
+                {
+                    GameObject.Destroy(grid[i, j]);
+                }
+            }
+        }
+    }
+
+    private bool ValidateDimensions(int width, int height)
+    {
+        if(width <= 0 || height <= 0 || width > 200 || height > 200)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    public bool TogglePause()
+    {
+        gamePaused = !gamePaused;
+
+        return gamePaused;
+    }
+
+    public void Reset()
+    {
+        ClearGrid();
+        RandomiseGrid();
+        nextStepTime = Time.time + interval;
+    }
+
+    public void Clear()
+    {
+        ClearGrid();
+    }
+
+    public void ChangeDimensions(int newWidth, int newHeight)
+    {
+        if(!ValidateDimensions(newWidth, newHeight))
+        {
+            Debug.Log("Dimensions must be between 1 and 200!");
+            return;
+        }
+
+        ClearGrid();
+        width = newWidth;
+        height = newHeight;
+        CreateGrid();
+        SetParentAndCameraPosition();
+        RandomiseGrid();
     }
 }
