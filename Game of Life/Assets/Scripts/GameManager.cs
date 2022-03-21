@@ -85,6 +85,36 @@ public class GameManager : MonoBehaviour
             case BlockType.Glider:
                 game.AddNewBlock(new Shape_Glider(), roundedPos);
                 break;
+            case BlockType.Beehive:
+                game.AddNewBlock(new Shape_Beehive(), roundedPos);
+                break;
+            case BlockType.Toad:
+                game.AddNewBlock(new Shape_Toad(), roundedPos);
+                break;
+            case BlockType.Loaf:
+                game.AddNewBlock(new Shape_Loaf(), roundedPos);
+                break;
+            case BlockType.Boat:
+                game.AddNewBlock(new Shape_Boat(), roundedPos);
+                break;
+            case BlockType.Beacon:
+                game.AddNewBlock(new Shape_Beacon(), roundedPos);
+                break;
+            case BlockType.Pulsar:
+                game.AddNewBlock(new Shape_Pulsar(), roundedPos);
+                break;
+            case BlockType.Pentadecathlon:
+                game.AddNewBlock(new Shape_Pentadecathlon(), roundedPos);
+                break;
+            case BlockType.LWSS:
+                game.AddNewBlock(new Shape_LWSS(), roundedPos);
+                break;
+            case BlockType.MWSS:
+                game.AddNewBlock(new Shape_MWSS(), roundedPos);
+                break;
+            case BlockType.HWSS:
+                game.AddNewBlock(new Shape_HWSS(), roundedPos);
+                break;
             default:
                 break;
         }
@@ -92,8 +122,8 @@ public class GameManager : MonoBehaviour
 
     private bool CheckIfFits(BlockType blockType, Vector2Int position)
     {
-        int width;
-        int height;
+        int width = 0;
+        int height = 0;
 
         switch(blockType)
         {
@@ -113,12 +143,51 @@ public class GameManager : MonoBehaviour
                 width = BlockTypeDimensions.glider.x;
                 height= BlockTypeDimensions.glider.y;
                 break;
+            case BlockType.Beehive:
+                width = BlockTypeDimensions.beehive.x;
+                height = BlockTypeDimensions.beehive.y;
+                break;
+            case BlockType.Toad:
+                width = BlockTypeDimensions.toad.x;
+                height = BlockTypeDimensions.toad.y;
+                break;
+            case BlockType.Loaf:
+                width = BlockTypeDimensions.loaf.x;
+                height = BlockTypeDimensions.loaf.y;
+                break;
+            case BlockType.Boat:
+                width = BlockTypeDimensions.boat.x;
+                height = BlockTypeDimensions.boat.y;
+                break;
+            case BlockType.Beacon:
+                width = BlockTypeDimensions.beacon.x;
+                height = BlockTypeDimensions.beacon.y;
+                break;
+            case BlockType.Pulsar:
+                width = BlockTypeDimensions.pulsar.x;
+                height = BlockTypeDimensions.pulsar.y;
+                break;
+            case BlockType.Pentadecathlon:
+                width = BlockTypeDimensions.pentadecathlon.x;
+                height = BlockTypeDimensions.pentadecathlon.y;
+                break;
+            case BlockType.LWSS:
+                width = BlockTypeDimensions.LWSS.x;
+                height = BlockTypeDimensions.LWSS.y;
+                break;
+            case BlockType.MWSS:
+                width = BlockTypeDimensions.MWSS.x;
+                height = BlockTypeDimensions.MWSS.y;
+                break;
+            case BlockType.HWSS:
+                width = BlockTypeDimensions.HWSS.x;
+                height = BlockTypeDimensions.HWSS.y;
+                break;
             default:
                 return false;
         }
 
-        if(position.x - width < 0 || position.y - height < 0 
-            || position.x + width >= game.GetWidth() || position.y + height >= game.GetHeight())
+        if(position.x + width >= game.GetWidth() || position.y + height >= game.GetHeight())
         {
             return false;
         }

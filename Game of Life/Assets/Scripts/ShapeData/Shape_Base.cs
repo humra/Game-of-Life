@@ -41,5 +41,5 @@ public abstract class Shape_Base
 
 public enum BlockType
 {
-    Block, Tub, Blinker, Glider
+    Block, Tub, Blinker, Glider, Beehive, Toad, Loaf, Boat, Beacon, Pulsar, Pentadecathlon, LWSS, MWSS, HWSS
 }
