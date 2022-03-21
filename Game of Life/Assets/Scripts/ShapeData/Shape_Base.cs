@@ -38,3 +38,8 @@ public abstract class Shape_Base
         return grid;
     }
 }
+
+public enum BlockType
+{
+    Block, Tub, Blinker, Glider
+}

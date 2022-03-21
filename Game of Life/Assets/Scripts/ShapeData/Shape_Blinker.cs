@@ -1,10 +1,10 @@
 
-public class Shape_Block : Shape_Base
+public class Shape_Blinker : Shape_Base
 {
     public override bool[,] InitializeShape()
     {
-        width = BlockTypeDimensions.block.x;
-        height = BlockTypeDimensions.block.y;
+        width = BlockTypeDimensions.blinker.x;
+        height = BlockTypeDimensions.blinker.y;
 
         grid = base.InitializeShape();
 
@@ -15,9 +15,8 @@ public class Shape_Block : Shape_Base
 
     public override void SetLivingSpaces()
     {
-        grid[1, 1] = true;
-        grid[1, 2] = true;
         grid[2, 1] = true;
         grid[2, 2] = true;
+        grid[2, 3] = true;
     }
 }

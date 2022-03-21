@@ -76,6 +76,15 @@ public class GameManager : MonoBehaviour
             case BlockType.Block:
                 game.AddNewBlock(new Shape_Block(), roundedPos);
                 break;
+            case BlockType.Tub:
+                game.AddNewBlock(new Shape_Tub(), roundedPos);
+                break;
+            case BlockType.Blinker:
+                game.AddNewBlock(new Shape_Blinker(), roundedPos);
+                break;
+            case BlockType.Glider:
+                game.AddNewBlock(new Shape_Glider(), roundedPos);
+                break;
             default:
                 break;
         }
@@ -90,7 +99,19 @@ public class GameManager : MonoBehaviour
         {
             case BlockType.Block:
                 width = BlockTypeDimensions.block.x;
-                height = BlockTypeDimensions.block.x;
+                height = BlockTypeDimensions.block.y;
+                break;
+            case BlockType.Tub:
+                width = BlockTypeDimensions.tub.x;
+                height = BlockTypeDimensions.tub.y;
+                break;
+            case BlockType.Blinker:
+                width = BlockTypeDimensions.blinker.x;
+                height = BlockTypeDimensions.blinker.y;
+                break;
+            case BlockType.Glider:
+                width = BlockTypeDimensions.glider.x;
+                height= BlockTypeDimensions.glider.y;
                 break;
             default:
                 return false;

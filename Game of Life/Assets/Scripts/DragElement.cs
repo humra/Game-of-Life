@@ -28,8 +28,3 @@ public class DragElement : MonoBehaviour, IDragHandler, IEndDragHandler
         FindObjectOfType<GameManager>().AddElement(blockType);
     }
 }
-
-public enum BlockType
-{
-    Block
-}
