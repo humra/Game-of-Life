@@ -9,12 +9,18 @@ public class GameManager : MonoBehaviour
     private TMP_InputField widthInput;
     [SerializeField]
     private TMP_InputField heightInput;
+    [SerializeField]
+    private Transform gameBoard;
 
     private GameOfLife game;
+    private LayerMask gameBoardLayer;
 
     private void Start()
     {
         game = FindObjectOfType<GameOfLife>();
+        Shape_Block temp = new Shape_Block();
+        temp.InitializeShape();
+        gameBoardLayer = LayerMask.GetMask("Board");
     }
 
     public void TogglePause()
@@ -47,5 +53,68 @@ public class GameManager : MonoBehaviour
         int width = int.Parse(widthInput.text);
 
         game.ChangeDimensions(width, height);
+    }
+
+    public void AddElement(BlockType blockType)
+    {
+        Vector3 pos = IsOverGameBoard();
+        if(pos == Vector3.zero)
+        {
+            return;
+        }
+
+        Vector2Int roundedPos = new Vector2Int(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y));
+
+        if(!CheckIfFits(blockType, roundedPos))
+        {
+            Debug.Log("The given shape will not fit there!");
+            return;
+        }
+
+        switch(blockType)
+        {
+            case BlockType.Block:
+                game.AddNewBlock(new Shape_Block(), roundedPos);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private bool CheckIfFits(BlockType blockType, Vector2Int position)
+    {
+        int width;
+        int height;
+
+        switch(blockType)
+        {
+            case BlockType.Block:
+                width = BlockTypeDimensions.block.x;
+                height = BlockTypeDimensions.block.x;
+                break;
+            default:
+                return false;
+        }
+
+        if(position.x - width < 0 || position.y - height < 0 
+            || position.x + width >= game.GetWidth() || position.y + height >= game.GetHeight())
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private Vector3 IsOverGameBoard()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, gameBoardLayer))
+        {
+            return hit.point;
+        }
+
+        return Vector3.zero;
     }
 }

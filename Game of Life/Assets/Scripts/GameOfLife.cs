@@ -23,6 +23,7 @@ public class GameOfLife : MonoBehaviour
     private void Awake()
     {
         CreateGrid();
+        SetBoardSize();
         SetParentAndCameraPosition();
     }
 
@@ -171,6 +172,11 @@ public class GameOfLife : MonoBehaviour
         return true;
     }
 
+    private void SetBoardSize()
+    {
+        gameBoard.transform.localScale = new Vector3(width, height, 1);
+    }
+
     public bool TogglePause()
     {
         gamePaused = !gamePaused;
@@ -201,8 +207,57 @@ public class GameOfLife : MonoBehaviour
         ClearGrid();
         width = newWidth;
         height = newHeight;
+        SetBoardSize();
         CreateGrid();
         SetParentAndCameraPosition();
         RandomiseGrid();
+    }
+
+    public bool IsPaused()
+    {
+        return gamePaused;
+    }
+
+    public int GetWidth()
+    {
+        return width;
+    }
+
+    public int GetHeight()
+    {
+        return height;
+    }
+
+    public Vector2 GetBoardStartPoint()
+    {
+        return gameBoard.transform.position;
+    }
+
+    public void AddNewBlock(Shape_Base newBlock, Vector2Int startPosition)
+    {
+        bool[,] newBlockGrid = newBlock.GetGrid();
+        Vector2Int dimensions = newBlock.GetDimensions();
+        int currentX;
+        int currentY;
+
+        for(int x = 0; x < dimensions.x; x++)
+        {
+            for(int y = 0; y < dimensions.y; y++)
+            {
+                currentX = startPosition.x + x;
+                currentY = startPosition.y + y;
+                if(!newBlockGrid[x, y] && grid[currentX, currentY] != null)
+                {
+                    GameObject.Destroy(grid[currentX, currentY]);
+                }
+                else if(newBlockGrid[x, y] && grid[currentX, currentY] == null)
+                {
+                    GameObject newCell = Instantiate(cellPrefab);
+                    newCell.transform.SetParent(gameBoard);
+                    newCell.transform.position = new Vector2Int(currentX, currentY) + cellOffset;
+                    grid[currentX, currentY] = newCell;
+                }
+            }
+        }
     }
 }
